@@ -13,6 +13,21 @@ return new class extends Migration
     {
         Schema::create('post_versions', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('generated_post_id')
+                ->constrained('generated_posts')
+                ->cascadeOnDelete();
+
+            $table->unsignedInteger('version_number');
+
+            $table->string('hook_propose', 280)->nullable();
+            $table->json('body_points')->nullable();
+            $table->json('suggested_hashtags')->nullable();
+            $table->text('tone_compliance_justification')->nullable();
+            $table->json('raw_payload')->nullable();
+
+            $table->string('source')->default('assistant');
+
             $table->timestamps();
         });
     }

@@ -13,6 +13,18 @@ return new class extends Migration
     {
         Schema::create('campaign_blueprints', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
+            $table->string('name');
+            $table->string('target_audience')->nullable();
+            $table->string('tone');
+            $table->unsignedInteger('max_hashtags')->default(1);
+            $table->unsignedInteger('max_characters')->default(280);
+            $table->json('additional_rules')->nullable();
+
             $table->timestamps();
         });
     }
