@@ -2,11 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\PublicationStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Enums\PublicationStatus;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class GeneratedPost extends Model
 {
@@ -21,8 +20,8 @@ class GeneratedPost extends Model
         'tone_compliance_justification',
         'raw_payload',
         'publication_status',
-
     ];
+
     protected function casts(): array
     {
         return [
@@ -46,5 +45,10 @@ class GeneratedPost extends Model
     public function rawContent(): BelongsTo
     {
         return $this->belongsTo(RawContent::class);
+    }
+
+    public function versions(): HasMany
+    {
+        return $this->hasMany(PostVersion::class);
     }
 }
