@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class PostVersion extends Model
 {
     protected $fillable = [
-       'generated_post_id',
+        'generated_post_id',
         'version_number',
         'hook_propose',
         'body_points',
@@ -31,6 +31,4 @@ class PostVersion extends Model
     {
         return $this->belongsTo(GeneratedPost::class);
     }
-
-   
 }

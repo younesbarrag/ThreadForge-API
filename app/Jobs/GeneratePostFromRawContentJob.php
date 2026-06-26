@@ -53,7 +53,7 @@ class GeneratePostFromRawContentJob implements ShouldQueue
                 $maxCharacters
             );
 
-            GeneratedPost::updateOrCreate(
+            $generatedPost = GeneratedPost::updateOrCreate(
                 [
                     'raw_content_id' => $rawContent->id,
                 ],
@@ -76,6 +76,22 @@ class GeneratePostFromRawContentJob implements ShouldQueue
                     'publication_status' => PublicationStatus::Draft,
                 ]
             );
+
+            $nextVersionNumber = $generatedPost->versions()->max('version_number') + 1;
+
+            $generatedPost->versions()->create([
+                'version_number' => $nextVersionNumber,
+                'hook_propose' => $generatedPost->hook_propose,
+                'body_points' => $generatedPost->body_points,
+                'suggested_hashtags' => $generatedPost->suggested_hashtags,
+                'tone_compliance_justification' => $generatedPost->tone_compliance_justification,
+                'raw_payload' => [
+                    'source' => 'mock_generation',
+                    'event' => 'generated_post_created',
+                    'note' => 'Version created automatically by GeneratePostFromRawContentJob.',
+                ],
+                'source' => 'job',
+            ]);
 
             $rawContent->update([
                 'processing_status' => ProcessingStatus::Completed,
