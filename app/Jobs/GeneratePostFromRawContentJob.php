@@ -49,7 +49,7 @@ class GeneratePostFromRawContentJob implements ShouldQueue
             ], 0, $maxHashtags);
 
             $hook = Str::limit(
-                '🚀 ' . $rawContent->content,
+                 $rawContent->content,
                 $maxCharacters
             );
 
