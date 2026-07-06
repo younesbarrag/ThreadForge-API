@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class RawContent extends Model
 {
@@ -18,11 +17,10 @@ class RawContent extends Model
         'error_message',
 
     ];
+
     protected function casts(): array
     {
-        return [
-            'content' => 'array',
-        ];
+        return [];
     }
 
     public function user(): BelongsTo
