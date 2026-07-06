@@ -47,18 +47,19 @@ class CampaignBlueprintController extends Controller
         return new CampaignBlueprintResource($blueprint);
     }
 
-   public function update(
-    UpdateCampaignBlueprintRequest $request,
-    CampaignBlueprint $blueprint
-): CampaignBlueprintResource {
-    $this->ensureUserOwnsBlueprint($request, $blueprint);
+    public function update(
+        UpdateCampaignBlueprintRequest $request,
+        CampaignBlueprint $blueprint
+    ): CampaignBlueprintResource {
+        $this->ensureUserOwnsBlueprint($request, $blueprint);
 
-    $blueprint->update($request->validated());
+        $blueprint->update($request->validated());
 
-    $blueprint->loadCount('generatedPosts');
+        $blueprint->loadCount('generatedPosts');
 
-    return new CampaignBlueprintResource($blueprint);
-}
+        return new CampaignBlueprintResource($blueprint);
+    }
+
     public function destroy(Request $request, CampaignBlueprint $blueprint): JsonResponse
     {
         $this->ensureUserOwnsBlueprint($request, $blueprint);

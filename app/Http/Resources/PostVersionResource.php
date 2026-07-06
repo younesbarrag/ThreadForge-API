@@ -15,17 +15,17 @@ class PostVersionResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this ->id,
+            'id' => $this->id,
             'generated_post_id' => $this->generated_post_id,
-            'version_number' => $this -> version_number,
-            'hook_propose' => $this ->hook_propose,
-            'body_points' => $this ->body_points,
-            'suggested_hashtags' => $this -> suggested_hashtags,
-            'tone_compliance_justification' =>$this->tone_compliance_justification,
-            'raw_payload'=> $this->raw_payload,
+            'version_number' => $this->version_number,
+            'hook_propose' => $this->hook_propose,
+            'body_points' => $this->body_points,
+            'suggested_hashtags' => $this->suggested_hashtags,
+            'tone_compliance_justification' => $this->tone_compliance_justification,
+            'raw_payload' => $this->raw_payload,
             'source' => $this->source,
-            'created_at' =>$this->created_at,
-            'updated_at'=>$this->updated_at,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
 
         ];
     }

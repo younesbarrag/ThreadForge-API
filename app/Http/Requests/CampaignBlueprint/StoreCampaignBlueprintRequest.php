@@ -20,15 +20,15 @@ class StoreCampaignBlueprintRequest extends FormRequest
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
- public function rules(): array
-{
-    return [
-        'name' => ['required', 'string', 'max:100'],
-        'target_audience' => ['nullable', 'string', 'max:255'],
-        'tone' => ['required', 'string', 'max:100'],
-        'max_hashtags' => ['required', 'integer', 'min:0', 'max:10'],
-        'max_characters' => ['required', 'integer', 'min:1', 'max:280'],
-        'additional_rules' => ['nullable', 'array'],
-    ];
-}
+    public function rules(): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:100'],
+            'target_audience' => ['nullable', 'string', 'max:255'],
+            'tone' => ['required', 'string', 'max:100'],
+            'max_hashtags' => ['required', 'integer', 'min:0', 'max:10'],
+            'max_characters' => ['required', 'integer', 'min:1', 'max:280'],
+            'additional_rules' => ['nullable', 'array'],
+        ];
+    }
 }

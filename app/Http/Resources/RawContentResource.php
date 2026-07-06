@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
 
-
 class RawContentResource extends JsonResource
 {
     public function toArray(Request $request): array
