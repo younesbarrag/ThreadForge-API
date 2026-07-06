@@ -7,9 +7,10 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Ai\Concerns\HasConversations;
 use Laravel\Sanctum\HasApiTokens;
 
 #[Fillable(['name', 'email', 'password'])]
@@ -17,7 +18,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasConversations, HasFactory, Notifiable;
 
     /**
      * Get the attributes that should be cast.
@@ -33,17 +34,17 @@ class User extends Authenticatable
     }
 
     public function campaignBlueprints(): HasMany
-{
-    return $this->hasMany(CampaignBlueprint::class);
-}
+    {
+        return $this->hasMany(CampaignBlueprint::class);
+    }
 
-public function rawContents(): HasMany
-{
-    return $this->hasMany(RawContent::class);
-}
+    public function rawContents(): HasMany
+    {
+        return $this->hasMany(RawContent::class);
+    }
 
-public function generatedPosts(): HasMany
-{
-    return $this->hasMany(GeneratedPost::class);
-}
+    public function generatedPosts(): HasMany
+    {
+        return $this->hasMany(GeneratedPost::class);
+    }
 }
