@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ProcessingStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -15,12 +16,13 @@ class RawContent extends Model
         'source_type',
         'processing_status',
         'error_message',
-
     ];
 
     protected function casts(): array
     {
-        return [];
+        return [
+            'processing_status' => ProcessingStatus::class,
+        ];
     }
 
     public function user(): BelongsTo

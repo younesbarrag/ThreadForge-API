@@ -3,6 +3,7 @@
 namespace App\Ai\Agents;
 
 use App\Ai\Tools\GetCampaignRulesTool;
+use Laravel\Ai\Contracts\Conversational;
 use App\Ai\Tools\GetPostHistoryTool;
 use Laravel\Ai\Attributes\MaxSteps;
 use Laravel\Ai\Concerns\RemembersConversations;
@@ -12,7 +13,7 @@ use Laravel\Ai\Promptable;
 use Stringable;
 
 #[MaxSteps(10)]
-class Ghostwriter implements Agent, HasTools
+class Ghostwriter implements Agent, Conversational, HasTools
 {
     use Promptable;
     use RemembersConversations;

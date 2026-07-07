@@ -11,14 +11,19 @@ use App\Http\Resources\MessageResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Str;
 use Laravel\Ai\Models\Conversation;
 use Laravel\Ai\Models\ConversationMessage;
 
 class GhostwriterController extends Controller
 {
-    public function indexConversations(Request $request): AnonymousResourceCollection
-    {
-        $conversations = Conversation::where('user_id', $request->user()->id)
+    public function indexConversations(
+        Request $request
+    ): AnonymousResourceCollection {
+        $conversations = Conversation::where(
+            'user_id',
+            $request->user()->id
+        )
             ->withCount('messages')
             ->latest()
             ->paginate(10);
@@ -27,11 +32,15 @@ class GhostwriterController extends Controller
     }
 
     public function storeConversation(
-        StoreConversationRequest $request,
+        StoreConversationRequest $request
     ): JsonResponse {
         $conversation = Conversation::create([
+            'id' => (string) Str::uuid(),
             'user_id' => $request->user()->id,
-            'title' => $request->validated('title', 'New conversation'),
+            'title' => $request->validated(
+                'title',
+                'New conversation'
+            ),
         ]);
 
         return (new ConversationResource($conversation))
@@ -44,9 +53,12 @@ class GhostwriterController extends Controller
 
     public function showConversation(
         Request $request,
-        string $conversation,
+        string $conversation
     ): ConversationResource {
-        $conversationModel = Conversation::where('id', $conversation)
+        $conversationModel = Conversation::where(
+            'id',
+            $conversation
+        )
             ->where('user_id', $request->user()->id)
             ->firstOrFail();
 
@@ -57,13 +69,20 @@ class GhostwriterController extends Controller
 
     public function destroyConversation(
         Request $request,
-        string $conversation,
+        string $conversation
     ): JsonResponse {
-        $conversationModel = Conversation::where('id', $conversation)
+        $conversationModel = Conversation::where(
+            'id',
+            $conversation
+        )
             ->where('user_id', $request->user()->id)
             ->firstOrFail();
 
-        ConversationMessage::where('conversation_id', $conversationModel->id)->delete();
+        ConversationMessage::where(
+            'conversation_id',
+            $conversationModel->id
+        )->delete();
+
         $conversationModel->delete();
 
         return response()->json([
@@ -73,13 +92,16 @@ class GhostwriterController extends Controller
 
     public function indexMessages(
         Request $request,
-        string $conversation,
+        string $conversation
     ): AnonymousResourceCollection {
         Conversation::where('id', $conversation)
             ->where('user_id', $request->user()->id)
             ->firstOrFail();
 
-        $messages = ConversationMessage::where('conversation_id', $conversation)
+        $messages = ConversationMessage::where(
+            'conversation_id',
+            $conversation
+        )
             ->orderBy('created_at')
             ->paginate(50);
 
@@ -88,34 +110,49 @@ class GhostwriterController extends Controller
 
     public function storeMessage(
         StoreMessageRequest $request,
-        string $conversation,
+        string $conversation
     ): JsonResponse {
         $user = $request->user();
 
-        $conversationModel = Conversation::where('id', $conversation)
+        $conversationModel = Conversation::where(
+            'id',
+            $conversation
+        )
             ->where('user_id', $user->id)
             ->firstOrFail();
 
-        $ghostwriter = new Ghostwriter(userId: $user->id);
-        $ghostwriter->continue($conversationModel->id, $user);
+        $ghostwriter = new Ghostwriter(
+            userId: $user->id
+        );
 
-        $response = $ghostwriter->prompt($request->validated('message'));
+        $ghostwriter->continue(
+            $conversationModel->id,
+            $user
+        );
 
-        $assistantMessage = ConversationMessage::where('conversation_id', $conversationModel->id)
+        $response = $ghostwriter->prompt(
+            $request->validated('message')
+        );
+
+        $assistantMessage = ConversationMessage::where(
+            'conversation_id',
+            $conversationModel->id
+        )
             ->where('role', 'assistant')
             ->latest()
-            ->first();
+            ->firstOrFail();
 
         $conversationModel->touch();
 
         return (new MessageResource($assistantMessage))
             ->additional([
                 'conversation_id' => $conversationModel->id,
-                'usage' => [
-                    'text_tokens' => $response->usage()->textTokens(),
-                    'input_tokens' => $response->usage()->inputTokens(),
-                    'output_tokens' => $response->usage()->outputTokens(),
-                ],
+
+                /*
+                 * Dans laravel/ai v0.8.1, usage est une propriété,
+                 * pas une méthode.
+                 */
+                'usage' => $response->usage->toArray(),
             ])
             ->response()
             ->setStatusCode(201);
