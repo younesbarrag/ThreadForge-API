@@ -39,4 +39,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/conversations/{conversation}', [GhostwriterController::class, 'destroyConversation']);
     Route::get('/conversations/{conversation}/messages', [GhostwriterController::class, 'indexMessages']);
     Route::post('/conversations/{conversation}/messages', [GhostwriterController::class, 'storeMessage']);
+
+    Route::post('/content/repurpose', [RawContentController::class, 'store']);
 });

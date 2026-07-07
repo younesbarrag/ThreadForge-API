@@ -99,4 +99,47 @@ class CampaignBlueprintTest extends TestCase
                 'name' => 'Other User Blueprint',
             ]);
     }
+
+    public function test_guest_cannot_access_blueprints(): void
+    {
+        $response = $this->getJson('/api/blueprints');
+
+        $response->assertUnauthorized();
+    }
+
+    public function test_authenticated_user_can_access_blueprints_with_correct_json_structure(): void
+    {
+        $user = User::factory()->create();
+
+        $blueprint = CampaignBlueprint::create([
+            'user_id' => $user->id,
+            'name' => 'CI Blueprint',
+            'target_audience' => 'Laravel backend developers',
+            'tone' => 'Professional',
+            'max_hashtags' => 1,
+            'max_characters' => 280,
+            'additional_rules' => [
+                'Use concise sentences',
+            ],
+        ]);
+
+        Sanctum::actingAs($user);
+
+        $response = $this->getJson('/api/blueprints');
+
+        $response
+            ->assertOk()
+            ->assertJsonStructure([
+                'data' => [
+                    '*' => [
+                        'id',
+                        'name',
+                        'tone',
+                    ],
+                ],
+            ])
+            ->assertJsonPath('data.0.id', $blueprint->id)
+            ->assertJsonPath('data.0.name', 'CI Blueprint')
+            ->assertJsonPath('data.0.tone', 'Professional');
+    }
 }
