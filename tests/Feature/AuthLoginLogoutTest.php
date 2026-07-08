@@ -43,4 +43,21 @@ class AuthLoginLogoutTest extends TestCase
 
         $this->assertDatabaseCount('personal_access_tokens', 0);
     }
+
+    public function test_user_cannot_login_with_wrong_password(): void
+    {
+        User::factory()->create([
+            'email' => 'younes@example.com',
+            'password' => Hash::make('password123'),
+        ]);
+
+        $response = $this->postJson('/api/login', [
+            'email' => 'younes@example.com',
+            'password' => 'wrong-password',
+        ]);
+
+        $response->assertUnauthorized();
+
+        $this->assertDatabaseCount('personal_access_tokens', 0);
+    }
 }

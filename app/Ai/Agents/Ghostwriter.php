@@ -3,11 +3,11 @@
 namespace App\Ai\Agents;
 
 use App\Ai\Tools\GetCampaignRulesTool;
-use Laravel\Ai\Contracts\Conversational;
 use App\Ai\Tools\GetPostHistoryTool;
 use Laravel\Ai\Attributes\MaxSteps;
 use Laravel\Ai\Concerns\RemembersConversations;
 use Laravel\Ai\Contracts\Agent;
+use Laravel\Ai\Contracts\Conversational;
 use Laravel\Ai\Contracts\HasTools;
 use Laravel\Ai\Promptable;
 use Stringable;

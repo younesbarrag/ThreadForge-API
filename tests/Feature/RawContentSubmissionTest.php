@@ -121,4 +121,50 @@ class RawContentSubmissionTest extends TestCase
 
         Queue::assertNothingPushed();
     }
+
+    public function test_content_repurpose_returns_202_and_dispatches_generation_job(): void
+    {
+        $user = User::factory()->create();
+
+        $blueprint = CampaignBlueprint::create([
+            'user_id' => $user->id,
+            'name' => 'Repurpose Blueprint',
+            'target_audience' => 'Laravel backend developers',
+            'tone' => 'Professional',
+            'max_hashtags' => 1,
+            'max_characters' => 280,
+            'additional_rules' => [],
+        ]);
+
+        Sanctum::actingAs($user);
+
+        Queue::fake();
+
+        $response = $this->postJson('/api/content/repurpose', [
+            'campaign_blueprint_id' => $blueprint->id,
+            'content' => 'Laravel queues allow heavy AI generation tasks to run asynchronously.',
+            'source_type' => 'text',
+        ]);
+
+        $response->assertAccepted();
+
+        $rawContent = RawContent::query()
+            ->where('user_id', $user->id)
+            ->where('campaign_blueprint_id', $blueprint->id)
+            ->firstOrFail();
+
+        $this->assertDatabaseHas('raw_contents', [
+            'id' => $rawContent->id,
+            'user_id' => $user->id,
+            'campaign_blueprint_id' => $blueprint->id,
+            'processing_status' => 'pending',
+        ]);
+
+        Queue::assertPushed(
+            GeneratePostFromRawContentJob::class,
+            function (GeneratePostFromRawContentJob $job) use ($rawContent): bool {
+                return $job->rawContentId === $rawContent->id;
+            }
+        );
+    }
 }
