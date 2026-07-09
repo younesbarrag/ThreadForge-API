@@ -23,7 +23,7 @@ class AuthLoginLogoutTest extends TestCase
             'password' => 'password123',
         ]);
 
-        $response->assertstatus(500);
+        $response->assertstatus(200);
 
         $this->assertDatabaseCount('personal_access_tokens', 1);
     }
